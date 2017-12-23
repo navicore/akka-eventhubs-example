@@ -1,0 +1,3 @@
+[submodule "lib/akka-eventhubs"]
+	path = lib/akka-eventhubs
+	url = git@github.com:navicore/akka-eventhubs.git
