@@ -33,7 +33,11 @@ libraryDependencies ++=
     "com.typesafe.akka" %% "akka-actor" % akkaVersion,
     "com.typesafe.akka" %% "akka-stream" % akkaVersion,
 
+    "com.github.scullxbones" %% "akka-persistence-mongo-casbah" % "2.0.4",
+    "org.mongodb" %% "casbah-core" % "3.1.1",
+
     "org.scalatest" %% "scalatest" % "3.0.1" % "test"
+
   )
 
 dependencyOverrides ++= Seq(
