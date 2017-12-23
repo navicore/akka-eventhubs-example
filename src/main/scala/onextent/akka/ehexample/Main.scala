@@ -12,7 +12,7 @@ object Main extends App {
 
   mySource.runForeach(m => {
 
-    println(s"ejs yay: ${m._1.substring(0, 140)}")
+    println(s"ejs yay: ${m._1.substring(0, 160)}")
     m._2.ack()
   })
 
