@@ -19,15 +19,15 @@ scalaVersion := scala212
 ensimeScalaVersion in ThisBuild := scala212
 val akkaVersion = "2.5.6"
 
-val akkaEvventHubs = RootProject(file("./lib/akka-eventhubs/"))
-val main = Project(id = "AkkaEventhubsExample", base = file(".")).dependsOn(akkaEvventHubs)
+//val akkaEvventHubs = RootProject(file("./lib/akka-eventhubs/"))
+//val main = Project(id = "AkkaEventhubsExample", base = file(".")).dependsOn(akkaEvventHubs)
 
 libraryDependencies ++=
   Seq(
-    //"tech.navicore" %% "akkaeventhubs" % "0.1.6",
+    "tech.navicore" %% "akkaeventhubs" % "0.1.9",
 
     "ch.qos.logback" % "logback-classic" % "1.1.7",
-    "com.typesafe" % "config" % "1.2.1",
+    "com.typesafe" % "config" % "1.3.1",
     "com.typesafe.scala-logging" %% "scala-logging" % "3.5.0",
 
     "com.typesafe.akka" %% "akka-actor" % akkaVersion,
