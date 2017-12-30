@@ -22,6 +22,8 @@ val akkaVersion = "2.5.6"
 val akkaEvventHubs = RootProject(file("./lib/akka-eventhubs/"))
 val main = Project(id = "AkkaEventhubsExample", base = file(".")).dependsOn(akkaEvventHubs)
 
+resolvers += Resolver.jcenterRepo // for redis
+
 libraryDependencies ++=
   Seq(
     //"tech.navicore" %% "akkaeventhubs" % "0.1.10",
@@ -35,6 +37,8 @@ libraryDependencies ++=
 
     "com.github.scullxbones" %% "akka-persistence-mongo-casbah" % "2.0.4",
     "org.mongodb" %% "casbah-core" % "3.1.1",
+
+    "com.hootsuite" %% "akka-persistence-redis" % "0.7.0",
 
     "org.scalatest" %% "scalatest" % "3.0.1" % "test"
 
