@@ -2,12 +2,12 @@ package onextent.akka.ehexample
 
 import scala.concurrent.duration._
 import akka.stream.scaladsl.{RestartSource, Source}
-import onextent.akka.eventhubs.Eventhubs
+import onextent.akka.eventhubs.{Eventhubs, InputEventHubConf1}
 import onextent.akka.eventhubs.Conf._
 
 object Main extends App {
 
-  val sourceGraph = new Eventhubs
+  val sourceGraph = new Eventhubs(InputEventHubConf1)
 
   val mySource = Source.fromGraph(sourceGraph)
 
