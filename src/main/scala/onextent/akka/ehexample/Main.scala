@@ -6,17 +6,15 @@ import onextent.akka.eventhubs.{Eventhubs, InputEventHubConf1, InputEventHubConf
 
 object Main extends App {
 
-  val sourceGraph = new Eventhubs(InputEventHubConf1)
- // val sourceGraph2 = new Eventhubs(InputEventHubConf2)
-
-  val mySource = Source.fromGraph(sourceGraph)
-  //val mySource2 = Source.fromGraph(sourceGraph2)
-
-  mySource.runForeach(m => {
+  val sourceGraph1 = new Eventhubs(InputEventHubConf1)
+  val mySource1 = Source.fromGraph(sourceGraph1)
+  mySource1.runForeach(m => {
     println(s"source1: ${m._1.substring(0, 160)}")
     m._2.ack()
   })
 
+//  val sourceGraph2 = new Eventhubs(InputEventHubConf2)
+//  val mySource2 = Source.fromGraph(sourceGraph2)
 //  mySource2.runForeach(m => {
 //    println(s"source2: ${m._1.substring(0, 160)}")
 //    m._2.ack()
