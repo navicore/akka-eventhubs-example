@@ -2,23 +2,23 @@ package onextent.akka.ehexample
 
 import akka.stream.scaladsl.Source
 import onextent.akka.eventhubs.Conf._
-import onextent.akka.eventhubs.{Eventhubs, InputEventHubConf1, InputEventHubConf2}
+import onextent.akka.eventhubs.{Eventhubs, EventHubConf1, EventHubConf2}
 
 object Main extends App {
 
-  val sourceGraph1 = new Eventhubs(InputEventHubConf1)
+  val sourceGraph1 = new Eventhubs(EventHubConf1)
   val mySource1 = Source.fromGraph(sourceGraph1)
   mySource1.runForeach(m => {
     println(s"source1: ${m._1.substring(0, 160)}")
     m._2.ack()
   })
 
-//  val sourceGraph2 = new Eventhubs(InputEventHubConf2)
-//  val mySource2 = Source.fromGraph(sourceGraph2)
-//  mySource2.runForeach(m => {
-//    println(s"source2: ${m._1.substring(0, 160)}")
-//    m._2.ack()
-//  })
+  val sourceGraph2 = new Eventhubs(EventHubConf2)
+  val mySource2 = Source.fromGraph(sourceGraph2)
+  mySource2.runForeach(m => {
+    println(s"source2: ${m._1.substring(0, 160)}")
+    m._2.ack()
+  })
 
   /*
   val restartSource = RestartSource.withBackoff(
