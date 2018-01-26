@@ -3,8 +3,7 @@ package onextent.akka.ehexample
 import akka.stream.scaladsl.Source
 import scala.concurrent.duration._
 import akka.stream.scaladsl.{RestartSource, Source}
-import onextent.akka.eventhubs._
-import onextent.akka.eventhubs.Conf._
+import Conf._
 import onextent.akka.eventhubs.{Eventhubs, EventHubConf1, EventHubConf2}
 
 object Main extends App {
