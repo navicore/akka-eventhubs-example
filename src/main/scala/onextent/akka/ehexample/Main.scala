@@ -18,7 +18,8 @@ object Main extends App {
   val sourceGraph2 = new Eventhubs(EventHubConf2)
   val mySource2 = Source.fromGraph(sourceGraph2)
   mySource2.runForeach(m => {
-    println(s"source2: ${m._1.substring(0, 160)}")
+    //println(s"source2: ${m._1.substring(0, 160)}")
+    println(s"source2: ${m._1}")
     m._2.ack()
   })
 
