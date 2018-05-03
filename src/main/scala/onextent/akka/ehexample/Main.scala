@@ -1,17 +1,44 @@
 package onextent.akka.ehexample
 
-import akka.stream.scaladsl.Source
+import akka.stream.scaladsl.{Sink, Source}
+import akka.{Done, NotUsed}
 import com.typesafe.config.{Config, ConfigFactory}
-import onextent.akka.eventhubs.{EventHubConf, Eventhubs}
-import Conf._
+import onextent.akka.ehexample.Conf._
+import onextent.akka.eventhubs.Connector.AckableOffset
+import onextent.akka.eventhubs.EventHubConf
+import onextent.akka.eventhubs.Eventhubs._
 
+import scala.concurrent.Future
+
+object MultiPartitionExample {
+
+  def apply(): Unit = {
+
+    val consumer: Sink[(String, AckableOffset), Future[Done]] =
+      Sink.foreach(m => {
+        println(s"SUPER SOURCE: ${m._1.substring(0, 160)}")
+        m._2.ack()
+      })
+
+    val toConsumer = createToConsumer(consumer)
+
+    val cfg: Config = ConfigFactory.load().getConfig("eventhubs-1")
+
+    for (pid <- 0 to EventHubConf(cfg).partitions) {
+
+      val src: Source[(String, AckableOffset), NotUsed] =
+        createPartitionSource(pid, cfg)
+
+      src.runWith(toConsumer)
+
+    }
+  }
+
+}
 object Main extends App {
-  val cfg1: Config = ConfigFactory.load().getConfig("eventhubs-1")
-  val sourceGraph1 = new Eventhubs(EventHubConf(cfg1))
-  val mySource1 = Source.fromGraph(sourceGraph1)
-  mySource1.runForeach(m => {
-    println(s"source1: ${m._1.substring(0, 160)}")
-    m._2.ack()
-  })
+
+  // TODO: create a toFlow example
+
+  MultiPartitionExample()
 
 }
