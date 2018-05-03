@@ -35,10 +35,29 @@ object MultiPartitionExample {
   }
 
 }
+
+object SinglePartitionExample {
+
+  def apply(): Unit = {
+
+    val cfg: Config = ConfigFactory.load().getConfig("eventhubs-1")
+
+    val source1 = createPartitionSource(0, cfg)
+
+    source1.runForeach(m => {
+      println(s"SINGLE SOURCE: ${m._1.substring(0, 160)}")
+      m._2.ack()
+    })
+
+  }
+
+}
+
 object Main extends App {
 
   // TODO: create a toFlow example
 
-  MultiPartitionExample()
+  //MultiPartitionExample()
+  SinglePartitionExample()
 
 }
