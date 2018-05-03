@@ -4,11 +4,13 @@ import akka.actor.ActorSystem
 import akka.pattern.AskTimeoutException
 import akka.serialization.SerializationExtension
 import akka.stream.{ActorMaterializer, ActorMaterializerSettings, Supervision}
+import com.typesafe.config.{Config, ConfigFactory}
 import com.typesafe.scalalogging.LazyLogging
 
-object Conf extends onextent.akka.eventhubs.Conf with LazyLogging {
+object Conf extends LazyLogging {
 
-  implicit val actorSystem: ActorSystem = ActorSystem(appName, conf)
+  val conf: Config = ConfigFactory.load()
+  implicit val actorSystem: ActorSystem = ActorSystem("example", conf)
   SerializationExtension(actorSystem)
 
   val decider: Supervision.Decider = {
