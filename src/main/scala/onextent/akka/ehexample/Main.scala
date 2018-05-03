@@ -24,7 +24,7 @@ object MultiPartitionExample {
 
     val cfg: Config = ConfigFactory.load().getConfig("eventhubs-1")
 
-    for (pid <- 0 to EventHubConf(cfg).partitions) {
+    for (pid <- 0 until  EventHubConf(cfg).partitions) {
 
       val src: Source[(String, AckableOffset), NotUsed] =
         createPartitionSource(pid, cfg)
@@ -57,7 +57,7 @@ object Main extends App {
 
   // TODO: create a toFlow example
 
-  //MultiPartitionExample()
-  SinglePartitionExample()
+  MultiPartitionExample()
+  //SinglePartitionExample()
 
 }
