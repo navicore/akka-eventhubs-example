@@ -17,6 +17,7 @@ object MultiPartitionExample {
     val consumer: Sink[(String, AckableOffset), Future[Done]] =
       Sink.foreach(m => {
         println(s"SUPER SOURCE: ${m._1.substring(0, 160)}")
+        //println(s"SINGLE SOURCE: ${m._1}")
         m._2.ack()
       })
 
@@ -34,7 +35,16 @@ object MultiPartitionExample {
         x
       })
 
+//      val xform = Flow[(String, AckableOffset)].map((x: (String, AckableOffset)) => {
+//
+//        import onextent.data.navipath.dsl.NaviPathSyntax._
+//        val txnId = x._1.query[String]("$.someId")
+//        println(s"do something with txnid! $txnId")
+//        (txnId.getOrElse("unknown"), x._2)
+//      })
+
       src.via(flow).runWith(toConsumer)
+      //src.via(xform).runWith(toConsumer)
 
     }
   }
