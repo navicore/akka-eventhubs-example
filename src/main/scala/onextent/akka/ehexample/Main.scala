@@ -1,6 +1,6 @@
 package onextent.akka.ehexample
 
-import akka.stream.scaladsl.{Sink, Source}
+import akka.stream.scaladsl.{Flow, Sink, Source}
 import akka.{Done, NotUsed}
 import com.typesafe.config.{Config, ConfigFactory}
 import onextent.akka.ehexample.Conf._
@@ -24,12 +24,17 @@ object MultiPartitionExample {
 
     val cfg: Config = ConfigFactory.load().getConfig("eventhubs-1")
 
-    for (pid <- 0 until  EventHubConf(cfg).partitions) {
+    for (pid <- 0 until EventHubConf(cfg).partitions) {
 
       val src: Source[(String, AckableOffset), NotUsed] =
         createPartitionSource(pid, cfg)
 
-      src.runWith(toConsumer)
+      val flow = Flow[(String, AckableOffset)].map((x: (String, AckableOffset)) => {
+        println(s"do something! ${x._1.substring(0, 9)}")
+        x
+      })
+
+      src.via(flow).runWith(toConsumer)
 
     }
   }
