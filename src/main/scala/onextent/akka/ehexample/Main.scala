@@ -31,7 +31,7 @@ object MultiPartitionExample {
         createPartitionSource(pid, cfg)
 
       val flow = Flow[(String, AckableOffset)].map((x: (String, AckableOffset)) => {
-        println(s"do something! ${x._1.substring(0, 9)}")
+        println(s"do something! pid: $pid ${x._1.substring(0, 9)}")
         x
       })
 
