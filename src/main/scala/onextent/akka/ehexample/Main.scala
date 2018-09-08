@@ -16,7 +16,7 @@ object MultiPartitionExample {
 
     val consumer: Sink[(String, AckableOffset), Future[Done]] =
       Sink.foreach(m => {
-        println(s"SUPER SOURCE: ${m._1.substring(0, 160)}")
+        //println(s"SUPER SOURCE: ${m._1.substring(0, 160)}")
         //println(s"SINGLE SOURCE: ${m._1}")
         m._2.ack()
       })
@@ -31,7 +31,16 @@ object MultiPartitionExample {
         createPartitionSource(pid, cfg)
 
       val flow = Flow[(String, AckableOffset)].map((x: (String, AckableOffset)) => {
-        println(s"do something! pid: $pid ${x._1.substring(0, 9)}")
+        //println(s"do something! pid: $pid ${x._1.substring(0, 9)}")
+        if (conf.getBoolean("main.pretty") && x._1.charAt(0) == '{') {
+          import org.json4s._
+          import org.json4s.native.JsonMethods._
+          val parsedJson: JValue = parse(x._1)
+          println(s"consumer pid $pid received:\n${pretty(render(parsedJson))}")
+        } else {
+          println(s"consumer pid $pid received:\n${x._1}")
+        }
+
         x
       })
 
