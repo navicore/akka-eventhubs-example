@@ -1,6 +1,3 @@
 [submodule "lib/akka-eventhubs"]
 	path = lib/akka-eventhubs
-	url = git@github.com:navicore/akka-eventhubs.git
-[submodule "lib/navipath"]
-	path = lib/navipath
-	url = git@github.com:navicore/NaviPath.git
+	url = https://github.com/navicore/akka-eventhubs

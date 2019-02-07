@@ -19,9 +19,8 @@ scalaVersion := scala212
 val akkaVersion = "2.5.6"
 
 val akkaEvventHubs = RootProject(file("./lib/akka-eventhubs/"))
-val naviPath = RootProject(file("./lib/navipath/"))
 
-val main = Project(id = "AkkaEventhubsExample", base = file(".")).dependsOn(akkaEvventHubs, naviPath)
+val main = Project(id = "AkkaEventhubsExample", base = file(".")).dependsOn(akkaEvventHubs)
 
 resolvers += Resolver.jcenterRepo // for redis
 
@@ -33,7 +32,7 @@ libraryDependencies ++=
     "com.typesafe" % "config" % "1.3.1",
     "com.typesafe.scala-logging" %% "scala-logging" % "3.5.0",
 
-    //"tech.navicore" %% "navipath" % "0.1.6",
+    "tech.navicore" %% "navipath" % "2.0.0",
 
     "com.typesafe.akka" %% "akka-actor" % akkaVersion,
     "com.typesafe.akka" %% "akka-stream" % akkaVersion,
