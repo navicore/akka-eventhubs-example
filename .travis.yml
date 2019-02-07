@@ -12,7 +12,7 @@ jdk:
 script:
   ## This runs the template with the default parameters, and runs test within the templated app.
   - sbt -Dfile.encoding=UTF8 -J-XX:ReservedCodeCacheSize=256M assembly
-  - docker build -t navicore/akka-eventhubs .
+  - docker build -t navicore/akka-eventhubs-example .
 
   # Tricks to avoid unnecessary cache updates
   - find $HOME/.sbt -name "*.lock" | xargs rm
@@ -26,8 +26,8 @@ services:
 after_success:
   - if [ "$TRAVIS_BRANCH" == "master" ]; then
     docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD";
-    docker push navicore/akka-eventhubs;
-    docker tag "navicore/akka-eventhubs" "navicore/akka-eventhubs-kafka:0.1.$TRAVIS_BUILD_NUMBER";
-    docker push "navicore/akka-eventhubs:0.1.$TRAVIS_BUILD_NUMBER";
+    docker push navicore/akka-eventhubs-example;
+    docker tag "navicore/akka-eventhubs-example" "navicore/akka-eventhubs-example:0.1.$TRAVIS_BUILD_NUMBER";
+    docker push "navicore/akka-eventhubs-example:0.1.$TRAVIS_BUILD_NUMBER";
     fi
 
