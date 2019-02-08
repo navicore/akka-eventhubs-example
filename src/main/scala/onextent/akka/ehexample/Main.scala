@@ -3,6 +3,7 @@ package onextent.akka.ehexample
 import akka.stream.scaladsl.{Flow, Sink, Source}
 import akka.{Done, NotUsed}
 import com.typesafe.config.{Config, ConfigFactory}
+import com.typesafe.scalalogging.LazyLogging
 import onextent.akka.ehexample.Conf._
 import onextent.akka.eventhubs.Connector.AckableOffset
 import onextent.akka.eventhubs.{EventHubConf, EventhubsSink, EventhubsSinkData}
@@ -64,7 +65,8 @@ object SinglePartitionExample {
   }
 
 }
-object SourceSinkExample {
+
+object SourceSinkExample extends LazyLogging {
 
   def apply(): Unit = {
 
@@ -101,6 +103,11 @@ object SourceSinkExample {
       src
         .via(flow)
         .via(format)
+        .recover {
+          case e =>
+            logger.error(s"recover op caught ${e.getMessage}", e)
+            throw e
+        }
         .runWith(new EventhubsSink(EventHubConf(outConfig)))
 
     }
