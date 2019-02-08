@@ -14,29 +14,32 @@ object MultiPartitionExample {
 
   def apply(): Unit = {
 
-    val consumer: Sink[(String, AckableOffset), Future[Done]] = Sink.foreach(m => m._2.ack())
+    val consumer: Sink[(String, AckableOffset), Future[Done]] =
+      Sink.foreach(m => m._2.ack())
 
     val toConsumer = createToConsumer(consumer)
 
-    val cfg: Config = ConfigFactory.load().getConfig("eventhubs-1")
+    val cfg: Config = ConfigFactory.load().getConfig("eventhubs-in")
 
     for (pid <- 0 until EventHubConf(cfg).partitions) {
 
       val src: Source[(String, AckableOffset), NotUsed] =
         createPartitionSource(pid, cfg)
 
-      val flow = Flow[(String, AckableOffset)].map((x: (String, AckableOffset)) => {
-        if (conf.getBoolean("main.pretty") && x._1.charAt(0) == '{') {
-          import org.json4s._
-          import org.json4s.native.JsonMethods._
-          val parsedJson: JValue = parse(x._1)
-          println(s"consumer pid $pid received:\n${pretty(render(parsedJson))}")
-        } else {
-          println(s"consumer pid $pid received:\n${x._1}")
-        }
+      val flow =
+        Flow[(String, AckableOffset)].map((x: (String, AckableOffset)) => {
+          if (conf.getBoolean("main.pretty") && x._1.charAt(0) == '{') {
+            import org.json4s._
+            import org.json4s.native.JsonMethods._
+            val parsedJson: JValue = parse(x._1)
+            println(
+              s"consumer pid $pid received:\n${pretty(render(parsedJson))}")
+          } else {
+            println(s"consumer pid $pid received:\n${x._1}")
+          }
 
-        x
-      })
+          x
+        })
 
       src.via(flow).runWith(toConsumer)
 
@@ -49,7 +52,7 @@ object SinglePartitionExample {
 
   def apply(): Unit = {
 
-    val cfg: Config = ConfigFactory.load().getConfig("eventhubs-1")
+    val cfg: Config = ConfigFactory.load().getConfig("eventhubs-in")
 
     val source1 = createPartitionSource(0, cfg)
 
@@ -65,30 +68,40 @@ object SourceSinkExample {
 
   def apply(): Unit = {
 
-    val cfg: Config = ConfigFactory.load().getConfig("eventhubs-1")
-    val outConfig: Config = ConfigFactory.load().getConfig("eventhubs-2")
+    val inConfig: Config = ConfigFactory.load().getConfig("eventhubs-in")
+    val outConfig: Config = ConfigFactory.load().getConfig("eventhubs-out")
 
-    for (pid <- 0 until EventHubConf(cfg).partitions) {
+    for (pid <- 0 until EventHubConf(inConfig).partitions) {
 
-      val src: Source[(String, AckableOffset), NotUsed] = createPartitionSource(pid, cfg)
+      val src: Source[(String, AckableOffset), NotUsed] =
+        createPartitionSource(pid, inConfig)
 
-      val flow = Flow[(String, AckableOffset)].map((x: (String, AckableOffset)) => {
-        if (conf.getBoolean("main.pretty") && x._1.charAt(0) == '{') {
-          import org.json4s._
-          import org.json4s.native.JsonMethods._
-          val parsedJson: JValue = parse(x._1)
-          println(s"consumer pid $pid received:\n${compact(render(parsedJson))}")
-        } else {
-          println(s"consumer pid $pid received:\n${x._1}")
-        }
-        x
-      })
+      val flow =
+        Flow[(String, AckableOffset)].map((x: (String, AckableOffset)) => {
+          if (conf.getBoolean("main.pretty") && x._1.charAt(0) == '{') {
+            import org.json4s._
+            import org.json4s.native.JsonMethods._
+            val parsedJson: JValue = parse(x._1)
+            println(
+              s"consumer pid $pid received:\n${compact(render(parsedJson))}")
+          } else {
+            println(s"consumer pid $pid received:\n${x._1}")
+          }
+          x
+        })
 
-      val format = Flow[(String, AckableOffset)].map((x: (String, AckableOffset)) =>
-        EventhubsSinkData(x._1.getBytes("UTF8"), None, None, Some(x._2))
-      )
+      val format = Flow[(String, AckableOffset)].map(
+        (x: (String, AckableOffset)) =>
+          // pass the payload, the partition key, props, and ackable
+          EventhubsSinkData(x._1.getBytes("UTF8"),
+                            Some(x._2.ackme.partitionKey),
+                            Some(x._2.ackme.properties.toMap),
+                            Some(x._2)))
 
-      src.via(flow).via(format).runWith(new EventhubsSink(EventHubConf(outConfig)))
+      src
+        .via(flow)
+        .via(format)
+        .runWith(new EventhubsSink(EventHubConf(outConfig)))
 
     }
   }
@@ -96,8 +109,6 @@ object SourceSinkExample {
 }
 
 object Main extends App {
-
-  // TODO: create a toFlow example
 
   //MultiPartitionExample()
   SourceSinkExample()
