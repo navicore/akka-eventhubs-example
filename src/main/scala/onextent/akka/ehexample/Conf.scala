@@ -18,7 +18,6 @@ object Conf extends LazyLogging {
     case _: AskTimeoutException =>
       // might want to try harder, retry w/backoff if the actor is really supposed to be there
       logger.warn(s"decider discarding message to resume processing")
-      System.exit(0) // experimenting with making every error fatal
       Supervision.Restart
 
     case e: java.text.ParseException =>
@@ -28,7 +27,6 @@ object Conf extends LazyLogging {
 
     case e =>
       logger.error(s"decider can not decide: $e")
-      System.exit(0) // experimenting with making every error fatal
       Supervision.Restart
 
   }
