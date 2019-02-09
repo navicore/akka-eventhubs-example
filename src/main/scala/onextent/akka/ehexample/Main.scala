@@ -120,7 +120,7 @@ object Main extends App {
   //MultiPartitionExample()
   SourceSinkExample()
 
-  actorSystem.terminate()
+  //actorSystem.terminate()
   //SinglePartitionExample()
 
 }
