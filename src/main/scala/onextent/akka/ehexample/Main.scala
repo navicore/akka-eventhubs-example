@@ -1,6 +1,6 @@
 package onextent.akka.ehexample
 
-import akka.stream.scaladsl.{Flow, Sink, Source}
+import akka.stream.scaladsl.{Flow, Keep, Sink, Source}
 import akka.{Done, NotUsed}
 import com.typesafe.config.{Config, ConfigFactory}
 import com.typesafe.scalalogging.LazyLogging
@@ -119,6 +119,8 @@ object Main extends App {
 
   //MultiPartitionExample()
   SourceSinkExample()
+
+  actorSystem.terminate()
   //SinglePartitionExample()
 
 }
