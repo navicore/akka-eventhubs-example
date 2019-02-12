@@ -31,7 +31,7 @@ object Conf extends LazyLogging {
 
   }
 
-  val partitionId: Int = {
+  lazy val partitionId: Int = {
     sys.env.get("POD_NAME") match {
       case Some(str) =>
         val pos = str.lastIndexOf('-')
