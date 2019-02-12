@@ -31,6 +31,15 @@ object Conf extends LazyLogging {
 
   }
 
+  val partitionId: Int = {
+    sys.env.get("POD_NAME") match {
+      case Some(str) =>
+        val pos = str.lastIndexOf('-')
+        str.substring(pos + 1).toInt
+      case _ => throw new java.lang.IllegalArgumentException("no pid in POD_NAME")
+    }
+  }
+
   implicit val materializer: ActorMaterializer = ActorMaterializer(
     ActorMaterializerSettings(actorSystem).withSupervisionStrategy(decider))
 

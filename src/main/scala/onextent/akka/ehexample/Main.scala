@@ -51,14 +51,14 @@ object MultiPartitionExample {
 
 object SinglePartitionExample {
 
-  def apply(): Unit = {
+  def apply(pid: Int): Unit = {
 
     val cfg: Config = ConfigFactory.load().getConfig("eventhubs-in")
 
-    val source1 = createPartitionSource(0, cfg)
+    val source1 = createPartitionSource(pid, cfg)
 
     source1.runForeach(m => {
-      println(s"SINGLE SOURCE: ${m._1.substring(0, 160)}")
+      println(s"SINGLE SOURCE PID $pid: ${m._1.substring(0, 160)}")
       m._2.ack()
     })
 
@@ -117,15 +117,6 @@ object SourceSinkExample extends LazyLogging {
 
 object SourceSinkSinglePartitionExample extends LazyLogging {
 
-  val partitionId: Int = {
-    sys.env.get("POD_NAME") match {
-      case Some(str) =>
-        val pos = str.lastIndexOf('-')
-        str.substring(pos + 1).toInt
-      case _ => throw new java.lang.IllegalArgumentException("no pid in POD_NAME")
-    }
-  }
-
   def apply(): Unit = {
 
     val inConfig: Config = ConfigFactory.load().getConfig("eventhubs-in")
@@ -174,9 +165,11 @@ object SourceSinkSinglePartitionExample extends LazyLogging {
 
 object Main extends App {
 
-  //MultiPartitionExample()
-  SourceSinkExample()
-
-  //SinglePartitionExample()
+  sys.env.getOrElse("MODE", "DEFAULT") match {
+    case "MULTI_PARTITION" => MultiPartitionExample()
+    case "SINGLE_PARTITION" => SinglePartitionExample(partitionId)
+    case "SOURCE_SINK" => SourceSinkExample()
+    case _ => MultiPartitionExample() // log to console
+  }
 
 }
