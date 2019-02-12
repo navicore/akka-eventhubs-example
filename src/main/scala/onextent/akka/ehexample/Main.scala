@@ -108,7 +108,7 @@ object SourceSinkExample extends LazyLogging {
             logger.error(s"recover op caught ${e.getMessage}", e)
             throw e
         }
-        .runWith(new EventhubsSink(EventHubConf(outConfig)))
+        .runWith(new EventhubsSink(EventHubConf(outConfig), pid))
 
     }
   }
@@ -166,7 +166,7 @@ object SourceSinkSinglePartitionExample extends LazyLogging {
           logger.error(s"recover op caught ${e.getMessage}", e)
           throw e
       }
-      .runWith(new EventhubsSink(EventHubConf(outConfig)))
+      .runWith(new EventhubsSink(EventHubConf(outConfig), partitionId))
 
   }
 
