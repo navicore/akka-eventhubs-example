@@ -1,6 +1,6 @@
 package onextent.akka.ehexample
 
-import akka.stream.scaladsl.{Flow, Sink, Source}
+import akka.stream.scaladsl.{Flow, Keep, Sink, Source}
 import akka.{Done, NotUsed}
 import com.typesafe.config.{Config, ConfigFactory}
 import com.typesafe.scalalogging.LazyLogging
@@ -9,16 +9,31 @@ import onextent.akka.eventhubs.Connector.AckableOffset
 import onextent.akka.eventhubs.{EventHubConf, EventhubsSink, EventhubsSinkData}
 import onextent.akka.eventhubs.Eventhubs._
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
+import scala.util.{Failure, Success}
 
-object MultiPartitionExample {
+object MultiPartitionExample extends LazyLogging {
 
   def apply(): Unit = {
+
+    implicit def ec: ExecutionContext = ExecutionContext.global
+    def handleTerminate(result: Future[Done]): Unit = {
+      result onComplete {
+        case Success(_) =>
+          logger.warn("success. but stream should not end!")
+          actorSystem.terminate()
+          sys.exit(0)
+        case Failure(e) =>
+          logger.error(s"failure. stream should not end! $e", e)
+          actorSystem.terminate()
+          sys.exit(-1)
+      }
+    }
 
     val consumer: Sink[(String, AckableOffset), Future[Done]] =
       Sink.foreach(m => m._2.ack())
 
-    val toConsumer = createToConsumer(consumer)
+    //val toConsumer = createToConsumer(consumer)
 
     val cfg: Config = ConfigFactory.load().getConfig("eventhubs-in")
 
@@ -42,7 +57,12 @@ object MultiPartitionExample {
           x
         })
 
-      src.via(flow).runWith(toConsumer)
+      //src.via(flow).runWith(toConsumer)
+
+      val last = src.viaMat(flow)(Keep.both)
+        .toMat(consumer)(Keep.right).run()
+
+      handleTerminate(last)
 
     }
   }
