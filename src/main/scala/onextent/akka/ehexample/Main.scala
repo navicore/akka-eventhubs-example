@@ -10,25 +10,12 @@ import onextent.akka.eventhubs.{EventHubConf, EventhubsSink, EventhubsSinkData}
 import onextent.akka.eventhubs.Eventhubs._
 
 import scala.concurrent.{ExecutionContext, Future}
-import scala.util.{Failure, Success}
 
 object MultiPartitionExample extends LazyLogging {
 
   def apply(): Unit = {
 
     implicit def ec: ExecutionContext = ExecutionContext.global
-    def handleTerminate(result: Future[Done]): Unit = {
-      result onComplete {
-        case Success(_) =>
-          logger.warn("success. but stream should not end!")
-          actorSystem.terminate()
-          sys.exit(0)
-        case Failure(e) =>
-          logger.error(s"failure. stream should not end! $e", e)
-          actorSystem.terminate()
-          sys.exit(-1)
-      }
-    }
 
     val consumer: Sink[(String, AckableOffset), Future[Done]] =
       Sink.foreach(m => m._2.ack())
@@ -62,7 +49,8 @@ object MultiPartitionExample extends LazyLogging {
       val last = src.viaMat(flow)(Keep.both)
         .toMat(consumer)(Keep.right).run()
 
-      handleTerminate(last)
+      //handleTermination(last)
+      handleTermination(src)
 
     }
   }
