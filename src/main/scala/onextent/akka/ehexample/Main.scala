@@ -6,7 +6,7 @@ import com.typesafe.config.{Config, ConfigFactory}
 import com.typesafe.scalalogging.LazyLogging
 import onextent.akka.ehexample.Conf._
 import onextent.akka.eventhubs.Connector.AckableOffset
-import onextent.akka.eventhubs.{EventHubConf, EventhubsSink, EventhubsSinkData}
+import onextent.akka.eventhubs.{EventHubConf, EventhubsBatchSink, EventhubsSink, EventhubsSinkData}
 import onextent.akka.eventhubs.Eventhubs._
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -116,7 +116,8 @@ object SourceSinkExample extends LazyLogging {
             logger.error(s"recover op caught ${e.getMessage}", e)
             throw e
         }
-        .runWith(new EventhubsSink(EventHubConf(outConfig), pid))
+        .grouped(10)
+        .runWith(new EventhubsBatchSink(EventHubConf(outConfig), pid))
 
     }
   }
