@@ -17,8 +17,14 @@ object MultiPartitionExample extends LazyLogging {
 
     implicit def ec: ExecutionContext = ExecutionContext.global
 
+    var count = 0
+
     val consumer: Sink[(String, AckableOffset), Future[Done]] =
-      Sink.foreach(m => m._2.ack())
+      Sink.foreach(m => {
+        m._2.ack()
+        count = count + 1
+        println(s"ack count $count")
+      })
 
     //val toConsumer = createToConsumer(consumer)
 
@@ -38,7 +44,8 @@ object MultiPartitionExample extends LazyLogging {
             println(
               s"consumer pid $pid received:\n${pretty(render(parsedJson))}")
           } else {
-            println(s"consumer pid $pid received:\n${x._1}")
+            //println(s"consumer pid $pid received:\n${x._1}")
+            println(s"consumer pid $pid received:\n${x._2.ackme.partitionKey}")
           }
 
           x
