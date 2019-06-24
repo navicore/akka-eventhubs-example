@@ -44,8 +44,8 @@ object MultiPartitionExample extends LazyLogging {
             println(
               s"consumer pid $pid received:\n${pretty(render(parsedJson))}")
           } else {
-            //println(s"consumer pid $pid received:\n${x._1}")
-            println(s"consumer pid $pid received:\n${x._2.ackme.partitionKey}")
+            println(s"consumer pid $pid received:\n${x._1}")
+            //println(s"consumer pid $pid received:\n${x._2.ackme.partitionKey}")
           }
 
           x
