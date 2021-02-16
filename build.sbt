@@ -20,13 +20,14 @@ val akkaVersion = "2.5.6"
 
 val akkaEvventHubs = RootProject(file("./lib/akka-eventhubs/"))
 
-val main = Project(id = "AkkaEventhubsExample", base = file(".")).dependsOn(akkaEvventHubs)
+//val main = Project(id = "AkkaEventhubsExample", base = file(".")).dependsOn(akkaEvventHubs)
+val main = Project(id = "AkkaEventhubsExample", base = file("."))
 
 resolvers += Resolver.jcenterRepo // for redis
 
 libraryDependencies ++=
   Seq(
-    //"tech.navicore" %% "akkaeventhubs" % "0.1.11",
+    "tech.navicore" %% "akkaeventhubs" % "1.5.1",
 
     "ch.qos.logback" % "logback-classic" % "1.1.7",
     "com.typesafe" % "config" % "1.3.1",
