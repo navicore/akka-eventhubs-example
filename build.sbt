@@ -43,7 +43,7 @@ libraryDependencies ++=
 
     "com.hootsuite" %% "akka-persistence-redis" % "0.7.0",
 
-    "org.json4s" %% "json4s-native" % "3.6.1",
+    "org.json4s" %% "json4s-native" % "3.6.12",
 
     "org.scalatest" %% "scalatest" % "3.0.1" % "test"
 
