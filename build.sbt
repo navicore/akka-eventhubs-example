@@ -16,7 +16,7 @@ val scala212 = "2.12.17"
 //val scala212 = "2.11.12"
 
 scalaVersion := scala212
-val akkaVersion = "2.5.6"
+val akkaVersion = "2.7.0"
 
 val akkaEvventHubs = RootProject(file("./lib/akka-eventhubs/"))
 
